@@ -67,15 +67,6 @@ python seed_categorias.py
 - `media/`: archivos subidos por usuarios (se ignora en git)
 - `logs/`: logs locales (se ignora en git)
 
-## Notas de git
-
-Lo que no se debe subir a GitHub ya está cubierto en `.gitignore`, incluyendo:
-
-- `entorno/` (venv)
-- `db.sqlite3`
-- `media/`
-- `logs/`
-- `.env`
 
 ## Comandos útiles
 
