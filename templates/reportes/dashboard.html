@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Reportes y Análisis – Taller{% endblock %}
+{% block page_title %}Análisis y Reportes{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  <div class="card bg-white rounded-2xl p-6 border border-outline-variant shadow-sm text-center">
+    <p class="text-on-surface-variant text-sm font-medium mb-1">Ingresos del Mes</p>
+    <p class="text-3xl font-bold text-primary">${{ ingresos_totales|floatformat:0 }}</p>
+  </div>
+  <div class="card bg-white rounded-2xl p-6 border border-outline-variant shadow-sm text-center">
+    <p class="text-on-surface-variant text-sm font-medium mb-1">Órdenes Completadas (Mes)</p>
+    <p class="text-3xl font-bold text-secondary">{{ ordenes_mes_count }}</p>
+  </div>
+  <div class="card bg-white rounded-2xl p-6 border border-outline-variant shadow-sm text-center">
+    <p class="text-on-surface-variant text-sm font-medium mb-1">Saldo por Cobrar</p>
+    <p class="text-3xl font-bold text-error">${{ saldo_por_cobrar|floatformat:0 }}</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <div class="card bg-white rounded-2xl p-6 border border-outline-variant shadow-sm">
+    <h3 class="font-bold text-on-surface mb-4 text-lg">Ingresos Históricos</h3>
+    <div class="h-64 flex items-center justify-center">
+      <canvas id="ingresosChart"></canvas>
+    </div>
+  </div>
+  
+  <div class="card bg-white rounded-2xl p-6 border border-outline-variant shadow-sm">
+    <h3 class="font-bold text-on-surface mb-4 text-lg">Reportes Disponibles</h3>
+    <div class="space-y-3">
+      <a href="#" onclick="alert('Módulo en desarrollo.')" class="flex items-center justify-between p-4 rounded-xl border border-outline-variant hover:bg-surface-container transition-colors">
+        <div>
+          <p class="font-semibold text-on-surface">Cierre de Caja Diario</p>
+          <p class="text-xs text-on-surface-variant">Resumen de ingresos y egresos del día actual.</p>
+        </div>
+        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </a>
+      <a href="{% url 'reportes:inventario' %}" class="flex items-center justify-between p-4 rounded-xl border border-outline-variant hover:bg-surface-container transition-colors">
+        <div>
+          <p class="font-semibold text-on-surface">Movimientos de Inventario</p>
+          <p class="text-xs text-on-surface-variant">Ventas, entradas y salidas de productos.</p>
+        </div>
+        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </a>
+      <a href="#" onclick="alert('Módulo en desarrollo.')" class="flex items-center justify-between p-4 rounded-xl border border-outline-variant hover:bg-surface-container transition-colors">
+        <div>
+          <p class="font-semibold text-on-surface">Rendimiento de Mecánicos</p>
+          <p class="text-xs text-on-surface-variant">Órdenes completadas por cada mecánico.</p>
+        </div>
+        <svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const ctx = document.getElementById('ingresosChart').getContext('2d');
+    
+    const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.5)'); // primary
+    gradient.addColorStop(1, 'rgba(37, 99, 235, 0.0)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            datasets: [{
+                label: 'Ingresos ($)',
+                data: [12000, 19000, 15000, 22000, 18000, 25000],
+                borderColor: '#2563eb',
+                backgroundColor: gradient,
+                borderWidth: 3,
+                pointBackgroundColor: '#ffffff',
+                pointBorderColor: '#2563eb',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                fill: true,
+                tension: 0.4
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    grid: { color: '#f1f5f9', drawBorder: false },
+                    ticks: { color: '#475569' }
+                },
+                x: {
+                    grid: { display: false, drawBorder: false },
+                    ticks: { color: '#475569' }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

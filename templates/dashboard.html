@@ -1,0 +1,181 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard – Taller{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<!-- KPI Row 1 -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <!-- Ingresos del mes -->
+  <div class="stat-card card bg-white rounded-2xl p-5 border border-outline-variant shadow-sm">
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center">
+        <svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+      </div>
+      <span class="badge bg-green-100 text-green-700 text-xs">Este mes</span>
+    </div>
+    <p class="text-2xl font-bold text-on-surface">${{ kpi.ingresos_mes|floatformat:0 }}</p>
+    <p class="text-sm text-on-surface-variant mt-1">Ingresos del mes</p>
+  </div>
+
+  <!-- Órdenes activas -->
+  <div class="stat-card card bg-white rounded-2xl p-5 border border-outline-variant shadow-sm">
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-11 h-11 rounded-xl bg-secondary/10 flex items-center justify-center">
+        <svg class="w-6 h-6 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+      </div>
+      <span class="badge bg-blue-100 text-blue-700 text-xs">Activas</span>
+    </div>
+    <p class="text-2xl font-bold text-on-surface">{{ kpi.ordenes_activas }}</p>
+    <p class="text-sm text-on-surface-variant mt-1">Órdenes en proceso</p>
+  </div>
+
+  <!-- Stock crítico -->
+  <div class="stat-card card bg-white rounded-2xl p-5 border border-outline-variant shadow-sm">
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-11 h-11 rounded-xl bg-red-50 flex items-center justify-center">
+        <svg class="w-6 h-6 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      </div>
+      {% if kpi.stock_critico > 0 %}
+      <span class="badge bg-red-100 text-red-700 text-xs">Atención</span>
+      {% endif %}
+    </div>
+    <p class="text-2xl font-bold text-on-surface">{{ kpi.stock_critico }}</p>
+    <p class="text-sm text-on-surface-variant mt-1">Productos en stock crítico</p>
+  </div>
+
+  <!-- Alertas mantenimiento -->
+  <div class="stat-card card bg-white rounded-2xl p-5 border border-outline-variant shadow-sm">
+    <div class="flex items-start justify-between mb-3">
+      <div class="w-11 h-11 rounded-xl bg-yellow-50 flex items-center justify-center">
+        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+      </div>
+      {% if kpi.alertas_mantenimiento > 0 %}
+      <span class="badge bg-yellow-100 text-yellow-700 text-xs">Pendiente</span>
+      {% endif %}
+    </div>
+    <p class="text-2xl font-bold text-on-surface">{{ kpi.alertas_mantenimiento }}</p>
+    <p class="text-sm text-on-surface-variant mt-1">Alertas de mantenimiento</p>
+  </div>
+</div>
+
+<!-- Second Row -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+  <!-- KPI secundarios (solo dueño) -->
+  {% if user.rol == 'DUENO' or user.is_superuser %}
+  <div class="bg-gradient-to-br from-primary to-blue-800 rounded-2xl p-6 text-white">
+    <h3 class="font-semibold text-sm text-on-primary-container mb-4">Resumen Financiero</h3>
+    <div class="space-y-3">
+      <div class="flex justify-between items-center">
+        <span class="text-on-primary-container text-sm">Ingresos del mes</span>
+        <span class="font-bold">${{ kpi.ingresos_mes|floatformat:0 }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-on-primary-container text-sm">Costos del mes</span>
+        <span class="font-bold">${{ kpi.costos_mes|floatformat:0 }}</span>
+      </div>
+      <div class="border-t border-white/20 pt-3 flex justify-between items-center">
+        <span class="text-on-primary-container text-sm font-semibold">Ganancia neta</span>
+        <span class="font-bold text-secondary-container text-lg">${{ kpi.ganancia_neta|floatformat:0 }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-on-primary-container text-sm">Ticket promedio</span>
+        <span class="font-bold">${{ kpi.ticket_promedio|floatformat:0 }}</span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span class="text-on-primary-container text-sm">Órdenes completadas</span>
+        <span class="font-bold">{{ kpi.ordenes_completadas }}</span>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Órdenes recientes -->
+  <div class="{% if user.rol == 'DUENO' or user.is_superuser %}lg:col-span-2{% else %}lg:col-span-3{% endif %} bg-white rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-outline-variant flex items-center justify-between">
+      <h3 class="font-semibold text-on-surface">Órdenes Recientes</h3>
+      <a href="{% url 'ordenes:lista' %}" class="text-xs font-medium text-primary hover:underline">Ver todas →</a>
+    </div>
+    <div class="divide-y divide-outline-variant">
+      {% for orden in ordenes_recientes %}
+      <a href="{% url 'ordenes:detalle' orden.pk %}" class="table-row flex items-center px-5 py-3 gap-4">
+        <div class="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+          <span class="text-primary text-xs font-bold">OT</span>
+        </div>
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-on-surface truncate">#{{ orden.numero_orden }} – {{ orden.vehiculo.patente }}</p>
+          <p class="text-xs text-on-surface-variant truncate">{{ orden.vehiculo.cliente.nombre_razon_social }}</p>
+        </div>
+        <div class="text-right flex-shrink-0">
+          <span class="badge text-xs
+            {% if orden.estado == 'PENDIENTE' %}bg-yellow-100 text-yellow-700
+            {% elif orden.estado == 'EN_PROCESO' %}bg-blue-100 text-blue-700
+            {% elif orden.estado == 'COMPLETADA' %}bg-green-100 text-green-700
+            {% elif orden.estado == 'FACTURADA' %}bg-purple-100 text-purple-700
+            {% elif orden.estado == 'CANCELADA' %}bg-red-100 text-red-700
+            {% else %}bg-gray-100 text-gray-700{% endif %}">
+            {{ orden.get_estado_display }}
+          </span>
+          <p class="text-xs text-on-surface-variant mt-1">${{ orden.total|floatformat:0 }}</p>
+        </div>
+      </a>
+      {% empty %}
+      <div class="px-5 py-8 text-center text-on-surface-variant text-sm">No hay órdenes recientes</div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Row -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+  <!-- Stock crítico -->
+  {% if kpi.stock_critico > 0 %}
+  <div class="bg-white rounded-2xl border border-red-200 shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-red-100 flex items-center justify-between bg-red-50">
+      <h3 class="font-semibold text-red-800 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+        Productos con Stock Crítico
+      </h3>
+      <a href="{% url 'inventario:lista' %}?critico=1" class="text-xs font-medium text-red-700 hover:underline">Ver todos →</a>
+    </div>
+    <div class="divide-y divide-outline-variant">
+      {% for p in productos_criticos|slice:":5" %}
+      <div class="flex items-center px-5 py-3 gap-3">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-on-surface truncate">{{ p.nombre }}</p>
+          <p class="text-xs text-on-surface-variant">SKU: {{ p.codigo_sku }}</p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm font-bold text-error">{{ p.stock_actual }} uds</p>
+          <p class="text-xs text-on-surface-variant">Mín: {{ p.stock_minimo }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Alertas de mantenimiento -->
+  {% if alertas_mantenimiento %}
+  <div class="bg-white rounded-2xl border border-yellow-200 shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-yellow-100 flex items-center justify-between bg-yellow-50">
+      <h3 class="font-semibold text-yellow-800 flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        Alertas de Mantenimiento
+      </h3>
+      <a href="{% url 'mantenimiento:alertas' %}" class="text-xs font-medium text-yellow-700 hover:underline">Ver todas →</a>
+    </div>
+    <div class="divide-y divide-outline-variant">
+      {% for alerta in alertas_mantenimiento|slice:":5" %}
+      <div class="flex items-center px-5 py-3 gap-3">
+        <div class="flex-1 min-w-0">
+          <p class="text-sm font-medium text-on-surface">{{ alerta.vehiculo.patente }} – {{ alerta.vehiculo.cliente.nombre_razon_social }}</p>
+          <p class="text-xs text-on-surface-variant">{{ alerta.tipo_servicio.nombre }}</p>
+        </div>
+        <span class="badge bg-yellow-100 text-yellow-700 text-xs">Pendiente</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

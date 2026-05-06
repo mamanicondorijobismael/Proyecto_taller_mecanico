@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} – Taller{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block breadcrumb %}
+<nav class="flex text-xs text-on-surface-variant mt-1">
+  <a href="{% url return_url %}" class="hover:text-primary transition-colors">Volver a la lista</a>
+  <span class="mx-2">/</span>
+  <span class="text-on-surface font-medium">{{ title }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto">
+  <div class="card bg-white rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+    <div class="p-6">
+      <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+        <div class="p-4 rounded-xl bg-error-container text-on-error-container text-sm">
+          {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {% for field in form %}
+          <div class="{% if field.name == 'descripcion' or field.name == 'compatibilidad_vehicular' %}md:col-span-2 lg:col-span-3{% endif %}">
+            <label class="block text-sm font-medium text-on-surface mb-1">{{ field.label }} {% if field.field.required %}*{% endif %}</label>
+            {{ field }}
+            {% if field.errors %}<p class="text-error text-xs mt-1">{{ field.errors.0 }}</p>{% endif %}
+            {% if field.help_text %}<p class="text-xs text-on-surface-variant mt-1">{{ field.help_text }}</p>{% endif %}
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="pt-6 border-t border-outline-variant flex justify-end gap-3">
+          <a href="{% url return_url %}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container transition-colors">
+            Cancelar
+          </a>
+          <button type="submit" class="btn-primary bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-medium shadow-md">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

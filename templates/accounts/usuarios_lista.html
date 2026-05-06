@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Personal y Usuarios – Taller{% endblock %}
+{% block page_title %}Gestión de Personal{% endblock %}
+
+{% block topbar_actions %}
+<a href="{% url 'usuario_crear' %}" class="btn-primary bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+  Nuevo Usuario
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card bg-white rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+  <div class="p-4 border-b border-outline-variant flex justify-between items-center bg-surface-container-lowest">
+    <h3 class="font-semibold text-on-surface">Lista de Usuarios del Sistema</h3>
+    <span class="text-sm text-on-surface-variant font-medium">Total: {{ usuarios.count }}</span>
+  </div>
+
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+          <th class="px-6 py-4 font-semibold">Usuario</th>
+          <th class="px-6 py-4 font-semibold">Nombre Completo</th>
+          <th class="px-6 py-4 font-semibold text-center">Rol</th>
+          <th class="px-6 py-4 font-semibold text-center">Estado</th>
+          <th class="px-6 py-4 font-semibold text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-outline-variant text-sm">
+        {% for u in usuarios %}
+        <tr class="table-row group">
+          <td class="px-6 py-4">
+            <p class="font-bold text-on-surface">@{{ u.username }}</p>
+            <p class="text-xs text-on-surface-variant mt-0.5">{{ u.email }}</p>
+          </td>
+          <td class="px-6 py-4 font-medium text-on-surface">
+            {{ u.nombre_completo }}
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="badge text-xs border
+              {% if u.rol == 'DUENO' %}bg-primary-fixed text-primary border-primary-fixed-dim
+              {% elif u.rol == 'ADMINISTRADOR' %}bg-secondary-fixed text-secondary border-secondary-fixed-dim
+              {% else %}bg-tertiary-fixed text-tertiary border-tertiary-fixed-dim{% endif %}">
+              {{ u.get_rol_display }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-center">
+            {% if u.is_active %}
+            <span class="badge bg-tertiary-fixed text-tertiary border border-tertiary-fixed-dim">Activo</span>
+            {% else %}
+            <span class="badge bg-error-container text-error border border-error">Inactivo</span>
+            {% endif %}
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <a href="{% url 'usuario_editar' u.pk %}" class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Editar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="5" class="px-6 py-12 text-center text-on-surface-variant">No hay usuarios registrados</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

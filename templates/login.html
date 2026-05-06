@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar Sesión – Taller Mecánico y Gomería</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          "primary":"#003d9b","secondary-container":"#fd8b00",
+          "on-primary-container":"#c4d2ff","background":"#f8f9fb",
+          "surface":"#f8f9fb","on-surface":"#191c1e","outline":"#737685",
+          "surface-container":"#eceef0","error":"#ba1a1a"
+        },
+        fontFamily: { body: ["Inter","sans-serif"] }
+      }}
+    }
+  </script>
+  <style>
+    * { font-family:'Inter',sans-serif; }
+    .login-card { animation: fadeUp 0.4s ease; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    .input-field { transition: border-color 0.2s, box-shadow 0.2s; }
+    .input-field:focus { outline:none; border-color:#003d9b; box-shadow:0 0 0 3px rgba(0,61,155,0.12); }
+    .btn-login { transition: all 0.2s; }
+    .btn-login:hover { transform:translateY(-1px); box-shadow:0 6px 20px rgba(0,61,155,0.35); }
+    .btn-login:active { transform:translateY(0); }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-primary to-blue-900 flex items-center justify-center p-4">
+  <div class="login-card bg-white rounded-2xl shadow-2xl overflow-hidden flex w-full max-w-4xl">
+    <!-- Left Panel -->
+    <div class="hidden md:flex flex-col justify-between bg-gradient-to-br from-primary to-blue-800 p-10 w-1/2 text-white">
+      <div>
+        <div class="w-14 h-14 rounded-2xl bg-secondary-container flex items-center justify-center mb-8">
+          <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl font-bold leading-tight mb-3">Taller Mecánico<br/>&amp; Gomería</h1>
+        <p class="text-on-primary-container text-sm leading-relaxed">Sistema integral de gestión: clientes, vehículos, inventario, órdenes de trabajo, facturación y reportes.</p>
+      </div>
+      <div class="space-y-3">
+        <div class="flex items-center gap-2 text-sm text-on-primary-container">
+          <svg class="w-4 h-4 text-secondary-container flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Gestión de clientes y vehículos
+        </div>
+        <div class="flex items-center gap-2 text-sm text-on-primary-container">
+          <svg class="w-4 h-4 text-secondary-container flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Control de inventario y stock
+        </div>
+        <div class="flex items-center gap-2 text-sm text-on-primary-container">
+          <svg class="w-4 h-4 text-secondary-container flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Órdenes de trabajo digitales
+        </div>
+        <div class="flex items-center gap-2 text-sm text-on-primary-container">
+          <svg class="w-4 h-4 text-secondary-container flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Facturación y cobros
+        </div>
+        <div class="flex items-center gap-2 text-sm text-on-primary-container">
+          <svg class="w-4 h-4 text-secondary-container flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg>
+          Reportes y analytics
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Panel (Form) -->
+    <div class="flex-1 flex flex-col justify-center p-8 md:p-12">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-on-surface mb-1">Bienvenido</h2>
+        <p class="text-sm text-outline">Ingresá tus credenciales para continuar</p>
+      </div>
+
+      {% if form.errors %}
+      <div class="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm flex items-center gap-2">
+        <svg class="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg>
+        Usuario o contraseña incorrectos. Verificá tus datos.
+      </div>
+      {% endif %}
+
+      <form method="post" class="space-y-5">
+        {% csrf_token %}
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5" for="id_username">Usuario</label>
+          <input id="id_username" name="username" type="text" autocomplete="username" required
+            value="{{ form.username.value|default:'' }}"
+            class="input-field w-full px-4 py-3 border border-outline-variant rounded-xl text-on-surface placeholder-outline text-sm bg-white"
+            placeholder="nombre de usuario" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium text-on-surface mb-1.5" for="id_password">Contraseña</label>
+          <input id="id_password" name="password" type="password" autocomplete="current-password" required
+            class="input-field w-full px-4 py-3 border border-outline-variant rounded-xl text-on-surface placeholder-outline text-sm bg-white"
+            placeholder="••••••••" />
+        </div>
+        <button type="submit" class="btn-login w-full py-3 px-6 bg-primary text-white font-semibold rounded-xl text-sm shadow-md">
+          Iniciar Sesión
+        </button>
+      </form>
+
+      <div class="mt-8 p-4 bg-surface-container rounded-xl">
+        <p class="text-xs font-semibold text-on-surface mb-2">Usuarios de prueba:</p>
+        <div class="space-y-1 text-xs text-outline">
+          <div class="flex justify-between"><span class="font-medium text-on-surface">admin</span><span>admin1234 – Dueño</span></div>
+          <div class="flex justify-between"><span class="font-medium text-on-surface">gerente</span><span>admin1234 – Administrador</span></div>
+          <div class="flex justify-between"><span class="font-medium text-on-surface">mecanico1</span><span>admin1234 – Mecánico</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

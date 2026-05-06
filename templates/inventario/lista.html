@@ -1,0 +1,121 @@
+{% extends 'base.html' %}
+{% block title %}Inventario General – Taller{% endblock %}
+{% block page_title %}Inventario de Productos{% endblock %}
+
+{% block topbar_actions %}
+<div class="flex gap-2 relative" x-data="{ open: false }">
+  <a href="{% url 'inventario:repuestos' %}" class="btn-primary bg-surface-container text-on-surface px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 border border-outline-variant">
+    Repuestos
+  </a>
+  <a href="{% url 'inventario:neumaticos' %}" class="btn-primary bg-surface-container text-on-surface px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 border border-outline-variant">
+    Neumáticos
+  </a>
+  
+  <div class="relative group">
+    <button class="btn-primary bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+      Nuevo Producto
+    </button>
+    <div class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-outline-variant opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden dropdown-menu">
+      <a href="{% url 'inventario:repuesto_crear' %}" class="block px-4 py-3 text-sm text-on-surface hover:bg-surface-container transition-colors">
+        <div class="font-medium">Nuevo Repuesto</div>
+        <div class="text-xs text-on-surface-variant">Partes y piezas</div>
+      </a>
+      <div class="h-px bg-outline-variant"></div>
+      <a href="{% url 'inventario:neumatico_crear' %}" class="block px-4 py-3 text-sm text-on-surface hover:bg-surface-container transition-colors">
+        <div class="font-medium">Nuevo Neumático</div>
+        <div class="text-xs text-on-surface-variant">Llantas y ruedas</div>
+      </a>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="card bg-white rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+  <!-- Search / Filter bar -->
+  <div class="p-4 border-b border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface-container-lowest">
+    <form method="get" class="relative w-full sm:w-96 flex gap-2">
+      <div class="relative flex-1">
+        <input type="text" name="q" value="{{ query }}" placeholder="Buscar por nombre o SKU..." 
+          class="form-input w-full pl-10 pr-4 py-2 border border-outline-variant rounded-xl text-sm bg-surface-bright placeholder-outline focus:outline-none" />
+        <svg class="w-5 h-5 text-outline absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </div>
+      <label class="flex items-center gap-2 text-sm text-on-surface cursor-pointer">
+        <input type="checkbox" name="critico" value="1" {% if critico == '1' %}checked{% endif %} onchange="this.form.submit()" class="rounded border-outline-variant text-primary focus:ring-primary" />
+        Stock Crítico
+      </label>
+    </form>
+    
+    <div class="flex items-center gap-3">
+      <span class="text-sm text-on-surface-variant font-medium">Total: {{ productos.count }}</span>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+          <th class="px-6 py-4 font-semibold">SKU / Producto</th>
+          <th class="px-6 py-4 font-semibold">Categoría</th>
+          <th class="px-6 py-4 font-semibold">Precio Venta</th>
+          <th class="px-6 py-4 font-semibold text-center">Stock</th>
+          <th class="px-6 py-4 font-semibold text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-outline-variant text-sm">
+        {% for prod in productos %}
+        <tr class="table-row group">
+          <td class="px-6 py-4">
+            <p class="font-medium text-on-surface">{{ prod.nombre }}</p>
+            <p class="text-xs text-on-surface-variant mt-0.5 font-mono">{{ prod.codigo_sku }}</p>
+          </td>
+          <td class="px-6 py-4">
+            <span class="inline-flex items-center justify-center bg-surface-container px-2 py-1 rounded text-xs font-medium text-on-surface">
+              {{ prod.categoria.nombre }}
+            </span>
+          </td>
+          <td class="px-6 py-4 font-medium text-on-surface">
+            ${{ prod.precio_venta|floatformat:2 }}
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="inline-flex items-center justify-center px-2.5 py-1 rounded-full text-xs font-bold border
+              {% if prod.stock_critico %}bg-error-container text-error border-error
+              {% else %}bg-tertiary-fixed text-tertiary border-tertiary-fixed-dim{% endif %}">
+              {{ prod.stock_actual }}
+            </span>
+            <p class="text-[10px] text-on-surface-variant mt-1">Mín: {{ prod.stock_minimo }}</p>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <a href="{% url 'reportes:producto_detalle' prod.pk %}" class="p-1.5 text-secondary hover:bg-secondary/10 rounded-lg transition-colors" title="Ver Análisis">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+              </a>
+              {% if prod.tipo_producto == 'REPUESTO' %}
+              <a href="{% url 'inventario:repuesto_editar' prod.pk %}" class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Editar Repuesto">
+              {% elif prod.tipo_producto == 'NEUMATICO' %}
+              <a href="{% url 'inventario:neumatico_editar' prod.pk %}" class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Editar Neumático">
+              {% else %}
+              <a href="#" onclick="alert('Este producto no tiene un tipo específico asignado.')" class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Editar">
+              {% endif %}
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" class="px-6 py-12 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface-container mb-4">
+              <svg class="w-8 h-8 text-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+            </div>
+            <h3 class="text-base font-semibold text-on-surface mb-1">No hay productos</h3>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

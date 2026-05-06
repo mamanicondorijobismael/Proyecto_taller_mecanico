@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}Facturación – Taller{% endblock %}
+{% block page_title %}Facturación y Cobros{% endblock %}
+
+{% block topbar_actions %}
+<a href="#" onclick="alert('Módulo en desarrollo.')" class="btn-primary bg-primary text-white px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2">
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+  Nueva Factura
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="card bg-white rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+  <!-- Search / Filter bar -->
+  <div class="p-4 border-b border-outline-variant flex flex-col sm:flex-row justify-between items-center gap-4 bg-surface-container-lowest">
+    <form method="get" class="relative w-full sm:w-auto flex flex-col sm:flex-row gap-2">
+      <div class="relative w-full sm:w-64">
+        <input type="text" name="q" value="{{ query }}" placeholder="Buscar N° Factura o Cliente..." 
+          class="form-input w-full pl-10 pr-4 py-2 border border-outline-variant rounded-xl text-sm bg-surface-bright placeholder-outline focus:outline-none" />
+        <svg class="w-5 h-5 text-outline absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+      </div>
+      <select name="estado" onchange="this.form.submit()" class="form-input py-2 pl-3 pr-8 border border-outline-variant rounded-xl text-sm bg-surface-bright text-on-surface focus:outline-none appearance-none">
+        <option value="">Todos los estados</option>
+        {% for code, label in estados %}
+        <option value="{{ code }}" {% if estado_filter == code %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </form>
+    
+    <div class="flex items-center gap-3">
+      <span class="text-sm text-on-surface-variant font-medium">Total: {{ facturas.count }}</span>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="overflow-x-auto">
+    <table class="w-full text-left border-collapse">
+      <thead>
+        <tr class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+          <th class="px-6 py-4 font-semibold">Factura</th>
+          <th class="px-6 py-4 font-semibold">Cliente</th>
+          <th class="px-6 py-4 font-semibold">Fecha Emisión</th>
+          <th class="px-6 py-4 font-semibold text-right">Total</th>
+          <th class="px-6 py-4 font-semibold text-right">Saldo</th>
+          <th class="px-6 py-4 font-semibold text-center">Estado</th>
+          <th class="px-6 py-4 font-semibold text-right">Acciones</th>
+        </tr>
+      </thead>
+      <tbody class="divide-y divide-outline-variant text-sm">
+        {% for factura in facturas %}
+        <tr class="table-row group">
+          <td class="px-6 py-4">
+            <span class="font-bold text-on-surface">#{{ factura.numero_factura }}</span>
+            <p class="text-xs text-on-surface-variant mt-0.5"><a href="{% url 'ordenes:detalle' factura.orden.pk %}" class="hover:underline text-primary">OT: {{ factura.orden.numero_orden }}</a></p>
+          </td>
+          <td class="px-6 py-4">
+            <p class="font-medium text-on-surface">{{ factura.cliente.nombre_razon_social }}</p>
+            <p class="text-xs text-on-surface-variant mt-0.5">CUIT/DNI: {{ factura.cliente.documento }}</p>
+          </td>
+          <td class="px-6 py-4 text-on-surface-variant text-sm">
+            {{ factura.fecha_emision|date:"d/m/Y" }}
+          </td>
+          <td class="px-6 py-4 text-right font-medium text-on-surface">
+            ${{ factura.total|floatformat:2 }}
+          </td>
+          <td class="px-6 py-4 text-right font-medium {% if factura.saldo_pendiente > 0 %}text-error{% else %}text-green-600{% endif %}">
+            ${{ factura.saldo_pendiente|floatformat:2 }}
+          </td>
+          <td class="px-6 py-4 text-center">
+            <span class="badge text-xs border
+              {% if factura.estado_pago == 'PENDIENTE' %}bg-error-container text-error border-error
+              {% elif factura.estado_pago == 'PARCIAL' %}bg-secondary-fixed text-secondary border-secondary-fixed-dim
+              {% elif factura.estado_pago == 'PAGADA' %}bg-tertiary-fixed text-tertiary border-tertiary-fixed-dim
+              {% endif %}">
+              {{ factura.get_estado_pago_display }}
+            </span>
+          </td>
+          <td class="px-6 py-4 text-right">
+            <div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              {% if factura.estado_pago != 'PAGADA' %}
+              <a href="{% url 'facturas:pagar' factura.pk %}" onclick="return confirm('¿Marcar factura {{ factura.numero_factura }} como pagada en efectivo?')" class="p-1.5 text-secondary-container hover:bg-secondary-container/10 rounded-lg transition-colors" title="Registrar Pago">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              </a>
+              {% endif %}
+              <a href="#" onclick="alert('Módulo en desarrollo.')" class="p-1.5 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Imprimir PDF">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7" class="px-6 py-12 text-center">
+            <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-surface-container mb-4">
+              <svg class="w-8 h-8 text-outline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2z"/></svg>
+            </div>
+            <h3 class="text-base font-semibold text-on-surface mb-1">No hay facturas</h3>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,53 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+entorno/
+.venv/
+venv/
+ENV/
+
+# Packaging / build
+build/
+dist/
+*.egg-info/
+
+# Tests / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Django
+*.log
+local_settings.py
+settings_local.py
+.env
+.env.*
+
+# Django media/uploads & collected static
+media/
+staticfiles/
+
+# Database (SQLite)
+db.sqlite3
+*.sqlite3
+
+# Logs folder
+logs/
+
+# IDEs / editors
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Windows: Python venv artifacts
+*.pyd
+
+# Optional: migrations are usually committed (so NOT ignoring apps/**/migrations/)

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% block title %}Reporte: {{ producto.nombre }} – Taller{% endblock %}
+{% block page_title %}Análisis de Producto{% endblock %}
+
+{% block breadcrumb %}
+<nav class="flex text-xs text-on-surface-variant mt-1">
+  <a href="{% url 'reportes:dashboard' %}" class="hover:text-primary transition-colors">Reportes</a>
+  <span class="mx-2">/</span>
+  <a href="{% url 'reportes:inventario' %}" class="hover:text-primary transition-colors">Inventario</a>
+  <span class="mx-2">/</span>
+  <span class="text-on-surface font-medium">{{ producto.codigo_sku }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+  <div class="md:col-span-2 card bg-white rounded-2xl p-6 border border-outline-variant shadow-sm flex items-center gap-6">
+    <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+      <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+    </div>
+    <div>
+      <h2 class="text-2xl font-bold text-on-surface">{{ producto.nombre }}</h2>
+      <p class="text-on-surface-variant font-mono">SKU: {{ producto.codigo_sku }}</p>
+      <div class="mt-2 flex gap-2">
+        <span class="badge bg-surface-container text-on-surface-variant border border-outline-variant">{{ producto.categoria.nombre }}</span>
+        <span class="badge {% if producto.stock_actual <= producto.stock_minimo %}bg-error-container text-error{% else %}bg-tertiary-container text-on-tertiary-container{% endif %}">Stock: {{ producto.stock_actual }} uds</span>
+      </div>
+    </div>
+  </div>
+  
+  <div class="card bg-white rounded-2xl p-6 border border-outline-variant shadow-sm flex flex-col justify-center text-center">
+    <p class="text-sm text-on-surface-variant font-medium">Ventas Totales</p>
+    <p class="text-4xl font-black text-primary">{{ ventas.count }}</p>
+    <p class="text-xs text-outline mt-1">unidades registradas en órdenes</p>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+  <!-- Ventas Recientes -->
+  <div class="card bg-white rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-outline-variant bg-surface-container-lowest">
+      <h3 class="font-semibold text-on-surface">Ventas en Órdenes de Trabajo</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+            <th class="px-6 py-3 font-semibold">OT</th>
+            <th class="px-6 py-3 font-semibold text-right">Cant.</th>
+            <th class="px-6 py-3 font-semibold text-right">Monto</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant text-sm">
+          {% for v in ventas %}
+          <tr class="hover:bg-surface-container-lowest transition-colors">
+            <td class="px-6 py-3">
+              <a href="{% url 'ordenes:detalle' v.orden.pk %}" class="font-medium text-primary hover:underline">#{{ v.orden.numero_orden }}</a>
+              <p class="text-xs text-on-surface-variant">{{ v.orden.fecha_creacion|date:"d/m/Y" }}</p>
+            </td>
+            <td class="px-6 py-3 text-right">{{ v.cantidad }}</td>
+            <td class="px-6 py-3 text-right font-medium">${{ v.precio_total|floatformat:2 }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="3" class="px-6 py-8 text-center text-on-surface-variant">No se han registrado ventas</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Movimientos de Stock -->
+  <div class="card bg-white rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+    <div class="px-5 py-4 border-b border-outline-variant bg-surface-container-lowest">
+      <h3 class="font-semibold text-on-surface">Historial de Stock</h3>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container-low text-on-surface-variant text-xs uppercase tracking-wider">
+            <th class="px-6 py-3 font-semibold">Fecha</th>
+            <th class="px-6 py-3 font-semibold">Tipo</th>
+            <th class="px-6 py-3 font-semibold text-right">Cant.</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-outline-variant text-sm">
+          {% for m in movimientos %}
+          <tr class="hover:bg-surface-container-lowest transition-colors">
+            <td class="px-6 py-3 text-on-surface-variant">{{ m.fecha|date:"d/m/y H:i" }}</td>
+            <td class="px-6 py-3">
+              <span class="text-xs font-bold uppercase 
+                {% if m.tipo_movimiento == 'ENTRADA' %}text-green-600
+                {% elif m.tipo_movimiento == 'SALIDA' %}text-error
+                {% else %}text-yellow-600{% endif %}">
+                {{ m.get_tipo_movimiento_display }}
+              </span>
+            </td>
+            <td class="px-6 py-3 text-right font-bold">{% if m.tipo_movimiento == 'SALIDA' %}-{% else %}+{% endif %}{{ m.cantidad }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

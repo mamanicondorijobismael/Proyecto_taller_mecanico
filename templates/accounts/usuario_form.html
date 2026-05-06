@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} – Taller{% endblock %}
+{% block page_title %}{{ title }}{% endblock %}
+
+{% block breadcrumb %}
+<nav class="flex text-xs text-on-surface-variant mt-1">
+  <a href="{% url 'usuarios_lista' %}" class="hover:text-primary transition-colors">Usuarios</a>
+  <span class="mx-2">/</span>
+  <span class="text-on-surface font-medium">{{ title }}</span>
+</nav>
+{% endblock %}
+
+{% block content %}
+<div class="max-w-xl mx-auto">
+  <div class="card bg-white rounded-2xl border border-outline-variant shadow-sm overflow-hidden">
+    <div class="p-6">
+      <form method="post" class="space-y-6">
+        {% csrf_token %}
+        
+        {% if form.non_field_errors %}
+        <div class="p-4 rounded-xl bg-error-container text-on-error-container text-sm">
+          {{ form.non_field_errors }}
+        </div>
+        {% endif %}
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-on-surface mb-1">Nombre de Usuario *</label>
+            {{ form.username }}
+            {% if form.username.errors %}<p class="text-error text-xs mt-1">{{ form.username.errors.0 }}</p>{% endif %}
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-on-surface mb-1">Email *</label>
+            {{ form.email }}
+            {% if form.email.errors %}<p class="text-error text-xs mt-1">{{ form.email.errors.0 }}</p>{% endif %}
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-on-surface mb-1">Nombre Completo *</label>
+            {{ form.nombre_completo }}
+            {% if form.nombre_completo.errors %}<p class="text-error text-xs mt-1">{{ form.nombre_completo.errors.0 }}</p>{% endif %}
+          </div>
+          
+          <div>
+            <label class="block text-sm font-medium text-on-surface mb-1">Rol *</label>
+            {{ form.rol }}
+            {% if form.rol.errors %}<p class="text-error text-xs mt-1">{{ form.rol.errors.0 }}</p>{% endif %}
+          </div>
+          
+          <div class="flex items-center gap-2 pt-2">
+            {{ form.is_active }}
+            <label class="text-sm font-medium text-on-surface cursor-pointer" for="{{ form.is_active.id_for_label }}">Usuario Activo (Permitir acceso)</label>
+            {% if form.is_active.errors %}<p class="text-error text-xs mt-1">{{ form.is_active.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="pt-6 border-t border-outline-variant flex justify-end gap-3">
+          <a href="{% url 'usuarios_lista' %}" class="px-5 py-2.5 rounded-xl text-sm font-medium text-on-surface-variant hover:bg-surface-container transition-colors">
+            Cancelar
+          </a>
+          <button type="submit" class="btn-primary bg-primary text-white px-6 py-2.5 rounded-xl text-sm font-medium shadow-md">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
