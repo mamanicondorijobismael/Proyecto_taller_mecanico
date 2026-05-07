@@ -20,6 +20,8 @@ dist/
 .coverage
 htmlcov/
 
+staticfiles/
+
 # Django
 *.log
 local_settings.py
